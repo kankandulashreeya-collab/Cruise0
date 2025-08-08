@@ -1,38 +1,138 @@
-.App {
+/* ===== Layout / Base ===== */
+.app-background {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;                 /* background image+gradient come from inline style in App.js */
+  font-family: 'Segoe UI', sans-serif;
+  padding: 16px;                 /* small padding so the card never touches screen edges */
+}
+
+/* ===== Existing login box (home screen) ===== */
+.login-box {
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  padding: 3rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  width: 90%;
+  max-width: 480px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.brand {
+  color: #0077be;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* ===== User info text ===== */
+.user-info {
+  margin-top: 20px;
+  text-align: left;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.verified {
+  color: #1e7e34;                /* nicer green */
+  font-weight: 600;
 }
 
-.App-link {
-  color: #61dafb;
+.not-verified {
+  color: #a94442;                /* nicer red */
+  font-weight: 600;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* ===== Loading ===== */
+.loading {
+  font-size: 1.5rem;
+  text-align: center;
+  padding: 2rem;
 }
+
+/* ===== Polished card (VerifyEmail / Profile) ===== */
+.card-xl {
+  width: min(560px, 92vw);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  padding: 28px 26px;
+}
+
+.card-header h2 {
+  margin: 4px 0 4px;
+}
+
+.subtle {
+  color: #4a4a4a;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.email {
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.card-body { margin-top: 14px; }
+.card-footer { margin-top: 16px; display: flex; justify-content: flex-end; }
+
+/* ===== Buttons ===== */
+.btn-primary {
+  border: 0;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #0077be;
+  color: #fff;
+  transition: transform .06s ease, box-shadow .06s ease, background .2s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  background: #0066a1;
+}
+
+.btn-ghost {
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 11px 16px;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-ghost:hover { background: #f6fbff; }
+
+.btn-link {
+  border: none;
+  background: transparent;
+  color: #0077be;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 8px 0;
+}
+
+/* ===== Badges & notices ===== */
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #fff3cd;
+  color: #8a6d3b;
+  border: 1px solid #ffe8a1;
+  margin-bottom: 6px;
+}
+
+.notice {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.notice.success { background: #e9f7ef; color: #1e7e34; border: 1px solid #c7eed8; }
+.notice.error { background: #fdecea; color: #a94442; border: 1px solid #f5c6cb; }
+
+/* ===== Small helpers ===== */
+.w-100 { width: 100%; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.tiny { font-size: 12px; opacity: .8; }
