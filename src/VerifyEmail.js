@@ -1,158 +1,140 @@
-// src/VerifyEmail.js
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useCallback, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function VerifyEmail() {
-  const { user, getAccessTokenSilently, logout } = useAuth0();
+  const {
+    isAuthenticated,
+    getAccessTokenSilently,
+    getIdTokenClaims,
+    logout,
+  } = useAuth0();
+
   const navigate = useNavigate();
+  const { search } = useLocation();
+  const emailFromQuery = new URLSearchParams(search).get("email") || "";
 
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState("");
-  const [err, setErr] = useState("");
+  const [redirecting, setRedirecting] = useState(false);
+  const [resendStatus, setResendStatus] = useState(""); // UX message after resend
+  const timerRef = useRef(null);
+  const startTsRef = useRef(Date.now());
 
-  // Auto-check timer UI
-  const [secondsToNextCheck, setSecondsToNextCheck] = useState(15);
-  const [checksRemaining, setChecksRemaining] = useState(8); // 8 * 15s ≈ 2 minutes
-
-  const domain = process.env.REACT_APP_AUTH0_DOMAIN;
-  const countdownRef = useRef(null);
-  const tickRef = useRef(null);
-
-  const checkStatus = async () => {
+  // ---- CORE CHECK: refresh claims & redirect when verified ----
+  const checkOnce = useCallback(async () => {
     try {
-      setErr("");
-      setBusy(true);
+      // Ensure we have a fresh token so email_verified isn't stale
+      await getAccessTokenSilently({ cacheMode: "off" }).catch(() => {});
+      const claims = await getIdTokenClaims({ cacheMode: "off", detailedResponse: true });
+      const verified = claims?.email_verified === true;
 
-      // Get fresh /userinfo (skip cache so we see newly-verified status)
-      const token = await getAccessTokenSilently({ cacheMode: "off" });
-      const res = await fetch(`https://${domain}/userinfo`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("userinfo fetch failed");
-      const fresh = await res.json();
-
-      if (fresh.email_verified) {
-        setMsg("Verified! Taking you to your profile…");
-        clearTimers();
-        setTimeout(() => navigate("/profile", { replace: true }), 600);
+      if (isAuthenticated && verified) {
+        setRedirecting(true); // show spinner
+        // small delay so spinner is visible
+        setTimeout(() => navigate("/profile", { replace: true }), 400);
         return true;
       }
-      return false;
     } catch {
-      setErr("Could not check verification status. Try again in a moment.");
-      return false;
-    } finally {
-      setBusy(false);
+      // ignore transient errors; next tick or focus event will retry
     }
-  };
+    return false;
+  }, [getAccessTokenSilently, getIdTokenClaims, isAuthenticated, navigate]);
 
-  const manualRefresh = async () => {
-    setMsg("");
-    await checkStatus();
-    // Reset the gentle timer after a manual check
-    setSecondsToNextCheck(15);
-  };
+  // ---- Start a light 2s cadence while tab is visible ----
+  const startCadence = useCallback(() => {
+    // only run interval while visible (avoid background throttling surprises)
+    if (document.visibilityState !== "visible") return;
 
-  const resendVerification = async () => {
-    setErr("");
-    setMsg("");
-    try {
-      const resp = await fetch("/api/resend-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: user?.email }),
-      });
-      if (!resp.ok) throw new Error("resend failed");
-      setMsg("Verification email sent. Give it a minute and check spam too.");
-    } catch {
-      setErr("Could not resend right now. Please try again in a moment.");
-    }
-  };
+    // run an immediate check when becoming visible/focused
+    void checkOnce();
 
-  const clearTimers = () => {
-    if (countdownRef.current) clearInterval(countdownRef.current);
-    if (tickRef.current) clearTimeout(tickRef.current);
-    countdownRef.current = null;
-    tickRef.current = null;
-  };
+    // clear any existing interval
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    timerRef.current = setInterval(async () => {
+      const elapsed = Date.now() - startTsRef.current;
+      if (elapsed > 120000) { // stop after ~2 minutes
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+        return;
+      }
+      const done = await checkOnce();
+      if (done) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }, 2000);
+  }, [checkOnce]);
 
   useEffect(() => {
-    // Start a gentle auto-check loop:
-    // - countdown every 1s
-    // - when it hits 0, perform a check
-    // - do this up to `checksRemaining` times (≈2 minutes)
-    countdownRef.current = setInterval(() => {
-      setSecondsToNextCheck((s) => (s > 0 ? s - 1 : 0));
-    }, 1000);
+    // On mount, begin cadence if visible
+    startCadence();
 
-    const loop = async () => {
-      setSecondsToNextCheck(15);
-      const verified = await checkStatus();
-      if (verified) return; // timers cleared inside checkStatus
+    // Foreground events: immediate check + (re)start cadence
+    const onVis = () => startCadence();
+    const onFocus = () => startCadence();
+    const onPageShow = () => startCadence();
 
-      setChecksRemaining((n) => {
-        const next = n - 1;
-        if (next <= 0) {
-          clearTimers(); // stop after budget is exhausted
-        } else {
-          // schedule next check in ~15s
-          tickRef.current = setTimeout(loop, 15000);
-        }
-        return next;
-      });
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("pageshow", onPageShow);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("pageshow", onPageShow);
+      if (timerRef.current) clearInterval(timerRef.current);
     };
+  }, [startCadence]);
 
-    // kick off first check in 15s
-    tickRef.current = setTimeout(loop, 15000);
-
-    return () => clearTimers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // ---- Resend verification (requires a tiny backend) ----
+  // Implement an endpoint that calls Auth0 Management API:
+  // POST https://YOUR_DOMAIN/api/v2/jobs/verification-email
+  // with a valid MGMT token (do NOT call MGMT API directly from the browser).
+  const resendVerification = async () => {
+    try {
+      setResendStatus("Sending…");
+      const res = await fetch("/api/resend-verification", { method: "POST" });
+      if (!res.ok) throw new Error();
+      setResendStatus("Verification email sent. Please check your inbox.");
+    } catch {
+      setResendStatus("Sorry—couldn’t resend right now. Please try again shortly.");
+    } finally {
+      setTimeout(() => setResendStatus(""), 5000);
+    }
+  };
 
   return (
     <div className="app-background">
-      <div className="card-xl">
-        <div className="card-header">
-          <div className="badge">Action required</div>
-          <h2>Verify your email</h2>
-          <p className="subtle">We sent a verification link to</p>
-          <p className="email">{user?.email}</p>
-        </div>
+      <div className="login-box">
+        <h2>Verify your email</h2>
 
-        <div className="card-body">
-          <button className="btn-primary w-100" onClick={manualRefresh} disabled={busy}>
-            {busy ? "Checking…" : "I’ve verified — refresh status"}
-          </button>
+        <p>
+          We’ve sent a verification link to{" "}
+          <strong>{emailFromQuery || "your email address"}</strong>. Please click the link to verify.
+        </p>
+        <p className="subtle">Tip: If you don’t see it, check Spam or Promotions.</p>
 
-          <button className="btn-ghost w-100 mt-8" onClick={resendVerification}>
-            Resend verification email
-          </button>
+        {/* Primary action area */}
+        {!redirecting ? (
+          <div style={{ marginTop: 16, display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <button className="secondary-btn" onClick={resendVerification}>
+              Resend verification email
+            </button>
+            <button
+              className="ghost-btn"
+              onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+            >
+              Log out
+            </button>
+          </div>
+        ) : (
+          <div style={{ marginTop: 18, display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+            <div className="spinner" aria-label="Loading" />
+            <span>Redirecting to your profile…</span>
+          </div>
+        )}
 
-          {/* Gentle auto-check status */}
-          {checksRemaining > 0 && (
-            <p className="tiny mt-12">
-              We’ll auto-check again in <strong>{secondsToNextCheck}s</strong>
-              {checksRemaining < 8 ? ` · ${checksRemaining} attempt(s) left` : null}
-            </p>
-          )}
-
-          {msg && <div className="notice success mt-12">{msg}</div>}
-          {err && <div className="notice error mt-12">{err}</div>}
-
-          <p className="tiny mt-12">
-            Tip: If you don’t see it, search your inbox for “Auth0” or check spam.
-          </p>
-        </div>
-
-        <div className="card-footer">
-          <button
-            className="btn-link"
-            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-          >
-            Log out
-          </button>
-        </div>
+        {resendStatus && <p style={{ marginTop: 12 }}>{resendStatus}</p>}
       </div>
     </div>
   );
