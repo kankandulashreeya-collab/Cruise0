@@ -237,3 +237,37 @@ body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI
   width: 100%;
   text-align: center;
 }
+
+/* Smaller helper text just above the CTA */
+.tip { 
+  color: var(--ink-60);
+  margin-top: 10px;
+  margin-bottom: 18px;
+}
+.tiny { font-size: 0.92rem; }
+
+/* Black, solid CTA button (replaces blue gradient for this page) */
+.btn-dark {
+  background: #111;          /* nearly black for softer contrast */
+  color: #fff;
+  border: 0;
+  padding: 18px 36px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.18rem;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0,0,0,.18);
+  transition: transform .09s cubic-bezier(.4,2,.6,1), box-shadow .18s cubic-bezier(.4,2,.6,1), filter .2s;
+  outline: none;
+}
+.btn-dark:hover, .btn-dark:focus {
+  transform: scale(1.04);
+  filter: brightness(1.02);
+  box-shadow: 0 8px 26px rgba(0,0,0,.22);
+}
+
+/* Logout link slightly subtler to match card aesthetic */
+.subtle-link { color: var(--ink-60); }
+.subtle-link:hover, .subtle-link:focus { color: var(--ink); }
+

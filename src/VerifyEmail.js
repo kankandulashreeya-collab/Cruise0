@@ -147,59 +147,52 @@ export default function VerifyEmail() {
   };
 
   return (
-    <div className="page-bg verify-bg" role="main" aria-labelledby="verify-title">
-      <div className="bg-overlay" />
+  <div className="page-bg verify-bg" role="main" aria-labelledby="verify-title">
+    <div className="bg-overlay" />
 
-      <div className="card card-xl" style={{ zIndex: 2, position: "relative" }}>
-        <div className="card-header">
-          <span className="badge">Email verification required</span>
-          <h2 id="verify-title" className="h2">Verify your email</h2>
-          <p className="lead">
-            We&apos;ve sent a verification link to{" "}
-            <span className="email">{shownEmail}</span>. Please click the link to verify.
-          </p>
-          <p className="subtle">
-            Tip: If you don&apos;t see it, check <strong>Spam</strong> or <strong>Promotions</strong>.
-          </p>
-        </div>
-
-        {msg && (
-          <div className="notice success" role="status" aria-live="polite" style={{ marginBottom: 8 }}>
-            {msg}
-          </div>
-        )}
-
-        <div className="card-actions">
-          <button
-            className="btn-primary"
-            onClick={resend}
-            disabled={sending}
-            aria-busy={sending ? "true" : "false"}
-          >
-            {sending ? "Sending…" : "Resend verification email"}
-          </button>
-
-          <button className="btn-link" onClick={handleLogout}>
-            Log out
-          </button>
-        </div>
-
-        {/* Help users who arrive here logged out after verifying */}
-        {!isAuthenticated && (
-          <div className="card-actions" style={{ marginTop: 16 }}>
-            <button className="btn-ghost" onClick={handleAlreadyVerifiedLogin}>
-              I already verified — log me in
-            </button>
-          </div>
-        )}
-
-        {redirecting && (
-          <div className="overlay" aria-live="polite">
-            <div className="spinner" aria-label="Loading" />
-            <div className="progress-text">Redirecting to your profile…</div>
-          </div>
-        )}
+    <div className="card card-xl" style={{ zIndex: 2, position: "relative" }}>
+      <div className="card-header">
+        <span className="badge">Email verification required</span>
+        <h2 id="verify-title" className="h2">Verify your email</h2>
+        <p className="lead">
+          We&apos;ve sent a verification link to{" "}
+          <span className="email">{shownEmail}</span>. Please click the link to verify.
+        </p>
+        {/* tip is now smaller + closer to the CTA */}
+        <p className="tip tiny">
+          Tip: If you don&apos;t see it, check <strong>Spam</strong> or <strong>Promotions</strong>.
+        </p>
       </div>
+
+      {msg && (
+        <div className="notice success" role="status" aria-live="polite" style={{ marginBottom: 8 }}>
+          {msg}
+        </div>
+      )}
+
+      <div className="card-actions" style={{ gap: 12 }}>
+        <button
+          className="btn-dark"
+          onClick={resend}
+          disabled={sending}
+          aria-busy={sending ? "true" : "false"}
+        >
+          {sending ? "Sending…" : "Resend verification email"}
+        </button>
+
+        <button className="btn-link subtle-link" onClick={handleLogout}>
+          Log out
+        </button>
+      </div>
+
+      {redirecting && (
+        <div className="overlay" aria-live="polite">
+          <div className="spinner" aria-label="Loading" />
+          <div className="progress-text">Redirecting to your profile…</div>
+        </div>
+      )}
     </div>
-  );
+  </div>
+);
+
 }
