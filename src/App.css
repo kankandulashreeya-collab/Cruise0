@@ -33,7 +33,25 @@ body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI
 }
 
 .card-xl { padding: 34px; }
+/* ---------- Centered container & card ---------- */
+.center-wrap { width: min(860px, 100%); display: grid; place-items: center; }
 
+.card {
+  width: min(720px, 96vw);
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 28px;
+  position: relative;
+}
+
+.card-xl { padding: 34px; }
+
+.card-header { margin-bottom: 16px; }
+.h2 { font-size: 28px; line-height: 1.25; margin: 0; }
+.lead { margin: 8px 0 0; font-size: 18px; color: var(--ink-60); }
+.subtle, .note { color: var(--ink-60); margin: 6px 0 0; }
+.brand-strong { color: var(--brand); font-weight: 700; }
 .card-header { margin-bottom: 16px; }
 .h2 { font-size: 28px; line-height: 1.25; margin: 0; }
 .lead { margin: 8px 0 0; font-size: 18px; color: var(--ink-60); }
@@ -51,9 +69,23 @@ body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI
 }
 
 .ml-auto { margin-left: auto; }
+.email { font-weight: 700; }
+
+/* ---------- Actions row ---------- */
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.ml-auto { margin-left: auto; }
 
 /* ---------- Buttons ---------- */
+/* ---------- Buttons ---------- */
 .btn-primary {
+  background: var(--brand);
+  color: #fff;
   background: var(--brand);
   color: #fff;
   border: 0;
@@ -62,24 +94,34 @@ body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI
   font-weight: 600;
   cursor: pointer;
   transition: transform .06s ease, box-shadow .12s ease, filter .2s ease;
+  transition: transform .06s ease, box-shadow .12s ease, filter .2s ease;
 }
+.btn-primary:hover { transform: translateY(-1px); filter: brightness(.96); box-shadow: 0 10px 22px rgba(11,105,199,.22); }
 .btn-primary:hover { transform: translateY(-1px); filter: brightness(.96); box-shadow: 0 10px 22px rgba(11,105,199,.22); }
 
 .btn-ghost {
   background: #fff;
   border: 1px solid rgba(2, 6, 23, .10);
   padding: 11px 14px;
+  background: #fff;
+  border: 1px solid rgba(2, 6, 23, .10);
+  padding: 11px 14px;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+  cursor: pointer;
 }
+.btn-ghost:hover { background: #f7f9fc; }
 .btn-ghost:hover { background: #f7f9fc; }
 
 .btn-link {
   border: none;
   background: transparent;
   color: var(--brand);
+  color: var(--brand);
   font-weight: 600;
+  cursor: pointer;
+  padding: 0;
   cursor: pointer;
   padding: 0;
 }
@@ -105,8 +147,30 @@ body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI
   width: 22px; height: 22px;
   border: 3px solid rgba(2,6,23,.18);
   border-top-color: rgba(2,6,23,.65);
+/* ---------- Table-ish profile layout ---------- */
+.table { border-top: 1px solid rgba(2,6,23,.08); margin-top: 8px; }
+.row { display: grid; grid-template-columns: 220px 1fr; border-bottom: 1px solid rgba(2,6,23,.08); }
+.cell { padding: 14px 2px; }
+.label { color: var(--ink-60); }
+
+/* ---------- Progress overlay & spinner ---------- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(3px);
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+}
+.spinner {
+  width: 22px; height: 22px;
+  border: 3px solid rgba(2,6,23,.18);
+  border-top-color: rgba(2,6,23,.65);
   border-radius: 999px;
+  animation: spin .8s linear infinite;
   animation: spin .8s linear infinite;
 }
 .progress-text { color: var(--ink-60); font-weight: 600; }
-@keyframes spin { to { transform: rotate(360deg);}}
+@keyframes spin { to { transform: rotate(360deg); } }
