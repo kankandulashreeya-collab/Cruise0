@@ -8,11 +8,10 @@ import VerifyEmail from "./VerifyEmail";
 import Profile from "./Profile";
 
 import "./App.css";
-import bgImage from "./assets/cruise-fw.jpeg";
 
 /** Shared background style with a translucent overlay */
 const backgroundStyle = {
-  backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(${bgImage})`,
+  backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/assets/cruise-bg.jpeg')`,
   backgroundSize: "cover",
   backgroundPosition: "center",
   backgroundRepeat: "no-repeat",
@@ -29,10 +28,8 @@ function Home() {
 
   return (
     <div style={backgroundStyle}>
-    <div style={backgroundStyle}>
-      <div className="login-box">
-        <h1>
-          Welcome to <span className="brand">Cruise0</span>
+      <div className="welcome-card">
+        <h1 className="welcome-title">
           Welcome to <span className="brand">Cruise0</span>
         </h1>
         {!isAuthenticated && <LoginButton />}
@@ -42,7 +39,6 @@ function Home() {
   );
 }
 
-/** Gatekeeper: route verified users to /profile else /verify-email */
 /** Gatekeeper: route verified users to /profile else /verify-email */
 function Gatekeeper() {
   const { isAuthenticated, user, isLoading } = useAuth0();
