@@ -12,6 +12,11 @@ root.render(
     domain={domain}
     clientId={clientId}
     authorizationParams={{ redirect_uri: window.location.origin }}
+    onRedirectCallback={(appState) => {
+      const hinted = localStorage.getItem("app:lastAuthIntent");
+      const target = appState?.returnTo || hinted || "/";
+      window.history.replaceState({}, document.title, target);
+    }}
   >
     <App />
   </Auth0Provider>

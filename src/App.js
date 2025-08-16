@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
 
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
@@ -43,17 +45,24 @@ function Home() {
 function Gatekeeper() {
   const { isAuthenticated, user, isLoading } = useAuth0();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   useEffect(() => {
     if (isLoading) return;
-    if (!isAuthenticated) return;
 
+    // Only gate on the landing route to choose the initial destination
+    if (pathname !== "/") return;
+
+    if (!isAuthenticated) return; // show Home with Login button
+
+    // user.email_verified can be stale, but this only sets an initial destination.
+    // VerifyEmail will do fresh-claims polling and take over from there.
     if (user?.email_verified) {
       navigate("/profile", { replace: true });
     } else {
       navigate("/verify-email", { replace: true });
     }
-  }, [isAuthenticated, isLoading, user, navigate]);
+  }, [isAuthenticated, isLoading, user, navigate, pathname]);
 
   return null;
 }
