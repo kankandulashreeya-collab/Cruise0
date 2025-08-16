@@ -150,7 +150,7 @@ export default function VerifyEmail() {
   <div className="page-bg verify-bg" role="main" aria-labelledby="verify-title">
     <div className="bg-overlay" />
 
-    <div className="card card-xl" style={{ zIndex: 2, position: "relative" }}>
+    <div className="card card-xl" style={{ zIndex: 2, position: "relative", width: "min(560px, 96vw)"}}>
       <div className="card-header">
         <span className="badge">Email verification required</span>
         <h2 id="verify-title" className="h2">Verify your email</h2>
@@ -170,9 +170,10 @@ export default function VerifyEmail() {
         </div>
       )}
 
-      <div className="card-actions" style={{ gap: 12 }}>
+      <div className="card-actions" style={{ gap: 12, flexDirection: "column", alignItems: "center" }}>
         <button
           className="btn-dark"
+          style={{ width: "min(420px, 100%)" }}
           onClick={resend}
           disabled={sending}
           aria-busy={sending ? "true" : "false"}
@@ -180,7 +181,10 @@ export default function VerifyEmail() {
           {sending ? "Sending…" : "Resend verification email"}
         </button>
 
-        <button className="btn-link subtle-link" onClick={handleLogout}>
+        <button 
+          className="btn-link subtle-link"
+          style={{ fontSize: "0.95rem" }}
+          onClick={handleLogout}>
           Log out
         </button>
       </div>

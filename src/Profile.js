@@ -10,7 +10,7 @@ export default function Profile() {
     <div className="page-bg verify-bg">
       <div className="bg-overlay" />
 
-      <div className="card card-xl" style={{ zIndex: 2, position: "relative" }}>
+      <div className="card card-xl" style={{ zIndex: 2, position: "relative", width: "min(680px, 96vw)" }}>
         <div className="card-header">
           <h2 className="h2" style={{ marginBottom: 6 }}>
             Welcome aboard, {user?.email}
