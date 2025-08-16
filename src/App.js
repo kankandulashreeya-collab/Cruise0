@@ -8,25 +8,30 @@ import VerifyEmail from "./VerifyEmail";
 import Profile from "./Profile";
 
 import "./App.css";
-import cruiseBg from "./assets/cruise-bg.png";
+import bgImage from "./assets/cruise-bg.jpeg";
 
-// Home Page
+/** Shared background style with a translucent overlay */
+const backgroundStyle = {
+  backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(${bgImage})',
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+  minHeight: "100vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  padding: "20px",
+};
+
+/** Home (landing) */
 function Home() {
   const { isAuthenticated } = useAuth0();
 
   return (
-    <div
-      className="app-background"
-      style={{
-        backgroundImage: `linear-gradient(to right, rgba(109,213,250,0.65), rgba(41,128,185,0.65)), url(${cruiseBg})`,
-        backgroundSize: "cover, cover",
-        backgroundPosition: "center, center",
-        backgroundRepeat: "no-repeat, no-repeat",
-      }}
-    >
+    <div style={backgroundStyle}>
       <div className="login-box">
         <h1>
-          Welcome to <span className="brand">Cruise0 🛳️</span>
+          Welcome to <span className="brand">Cruise0</span>
         </h1>
         {!isAuthenticated && <LoginButton />}
         {isAuthenticated && <LogoutButton />}
@@ -35,7 +40,7 @@ function Home() {
   );
 }
 
-// Gatekeeper decides where to send authenticated users
+/** Gatekeeper: route verified users to /profile else /verify-email */
 function Gatekeeper() {
   const { isAuthenticated, user, isLoading } = useAuth0();
   const navigate = useNavigate();
@@ -51,7 +56,7 @@ function Gatekeeper() {
     }
   }, [isAuthenticated, isLoading, user, navigate]);
 
-  return null; // renders nothing
+  return null;
 }
 
 export default function App() {
@@ -62,8 +67,7 @@ export default function App() {
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
-      {/* Gatekeeper runs on every page to check verification status */}
       <Gatekeeper />
     </BrowserRouter>
-  );
+  );
 }

@@ -1,85 +1,69 @@
-// src/Profile.js
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import LogoutButton from "./LogoutButton";
+import bgImage from "./assets/cruise-bg.jpeg";
+import "./App.css";
+
+const backgroundStyle = {
+  backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url(${bgImage})',
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundRepeat: "no-repeat",
+  minHeight: "100vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  padding: "20px",
+};
 
 export default function Profile() {
   const { user } = useAuth0();
 
-  /**
-   * Where we read country/timezone from:
-   * 1) Primary source: namespaced custom claims we set in the Post-Login Action:
-   *      api.idToken.setCustomClaim('https://cruise0.app/country', country)
-   *      api.idToken.setCustomClaim('https://cruise0.app/timezone', timezone)
-   * 2) Fallback: app_metadata (also written in the Action) so you can see it in Dashboard.
-   */
-  const country =
-    user?.["https://cruise0.app/country"] ||
-    user?.app_metadata?.country;
-
-  const timezone =
-    user?.["https://cruise0.app/timezone"] ||
-    user?.app_metadata?.timezone;
-
-  /**
-   * Small helper styles for key–value rows, so you don’t need extra CSS.
-   * (If you prefer CSS, you can move these into .kv in App.css later.)
-   */
-  const row = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "10px 0",
-    borderBottom: "1px solid rgba(0,0,0,0.06)",
-  };
-  const keyStyle = { opacity: 0.75 };
-  const valStyle = { fontWeight: 700 };
-
   return (
-    <div className="app-background">
+    <div style={backgroundStyle}>
       <div className="card-xl">
-        {/* Header */}
         <div className="card-header">
-          <h2>Welcome aboard, {user?.name || "traveler"} 👋</h2>
+          <h2 style={{ marginBottom: 6 }}>
+            Welcome aboard, {user?.email}
+          </h2>
           <p className="subtle">Your Cruise0 profile</p>
         </div>
 
-        {/* Body */}
         <div className="card-body">
-          {/* Email */}
-          <div style={row}>
-            <span style={keyStyle}>Email</span>
-            <strong style={valStyle}>{user?.email}</strong>
-          </div>
-
-          {/* Email verified */}
-          <div style={row}>
-            <span style={keyStyle}>Email verified</span>
-            <strong style={valStyle}>{String(user?.email_verified)}</strong>
-          </div>
-
-          {/* Country (from namespaced claim or app_metadata) */}
-          {country && (
-            <div style={row}>
-              <span style={keyStyle}>Country</span>
-              <strong style={valStyle}>{country}</strong>
-            </div>
-          )}
-
-          {/* Time zone (optional, if Action set it) */}
-          {timezone && (
-            <div style={row}>
-              <span style={keyStyle}>Time zone</span>
-              <strong style={valStyle}>{timezone}</strong>
-            </div>
-          )}
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <tbody>
+              <tr>
+                <td style={{ padding: "10px 0", opacity: 0.8 }}>Email</td>
+                <td style={{ padding: "10px 0", fontWeight: 600 }}>
+                  {user?.email}
+                </td>
+              </tr>
+              <tr>
+                <td style={{ padding: "10px 0", opacity: 0.8 }}>Email verified</td>
+                <td style={{ padding: "10px 0", fontWeight: 600 }}>
+                  {String(user?.email_verified)}
+                </td>
+              </tr>
+              <tr>
+                <td style={{ padding: "10px 0", opacity: 0.8 }}>Country</td>
+                <td style={{ padding: "10px 0", fontWeight: 600 }}>
+                  {user?.["https://cruise0.app/country"] ?? "—"}
+                </td>
+              </tr>
+              <tr>
+                <td style={{ padding: "10px 0", opacity: 0.8 }}>Time zone</td>
+                <td style={{ padding: "10px 0", fontWeight: 600 }}>
+                  {user?.["https://cruise0.app/timezone"] ?? "—"}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        {/* Footer */}
-        <div className="card-footer">
+        <div className="card-footer" style={{ justifyContent: "flex-end" }}>
           <LogoutButton />
         </div>
       </div>
-    </div>
-  );
+    </div>
+  );
 }

@@ -1,138 +1,112 @@
-/* ===== Layout / Base ===== */
-.app-background {
+/* ---------- Base layout & shared background ---------- */
+:root {
+  --brand: #0b69c7;
+  --ink: #0f172a;
+  --ink-60: rgba(15, 23, 42, .60);
+  --card: rgba(255, 255, 255, .94);
+  --shadow: 0 18px 60px rgba(0,0,0,.18);
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: var(--ink); }
+
+.page-bg {
+  min-height: 100%;
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+/* ---------- Centered container & card ---------- */
+.center-wrap { width: min(860px, 100%); display: grid; place-items: center; }
+
+.card {
+  width: min(720px, 96vw);
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 28px;
+  position: relative;
+}
+
+.card-xl { padding: 34px; }
+
+.card-header { margin-bottom: 16px; }
+.h2 { font-size: 28px; line-height: 1.25; margin: 0; }
+.lead { margin: 8px 0 0; font-size: 18px; color: var(--ink-60); }
+.subtle, .note { color: var(--ink-60); margin: 6px 0 0; }
+.brand-strong { color: var(--brand); font-weight: 700; }
+
+.email { font-weight: 700; }
+
+/* ---------- Actions row ---------- */
+.card-actions {
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 100vh;                 /* background image+gradient come from inline style in App.js */
-  font-family: 'Segoe UI', sans-serif;
-  padding: 16px;                 /* small padding so the card never touches screen edges */
+  gap: 12px;
+  margin-top: 18px;
 }
 
-/* ===== Existing login box (home screen) ===== */
-.login-box {
-  background-color: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(6px);
-  padding: 3rem 2rem;
-  border-radius: 20px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
-  width: 90%;
-  max-width: 480px;
-  text-align: center;
-}
+.ml-auto { margin-left: auto; }
 
-.brand {
-  color: #0077be;
-}
-
-/* ===== User info text ===== */
-.user-info {
-  margin-top: 20px;
-  text-align: left;
-}
-
-.verified {
-  color: #1e7e34;                /* nicer green */
-  font-weight: 600;
-}
-
-.not-verified {
-  color: #a94442;                /* nicer red */
-  font-weight: 600;
-}
-
-/* ===== Loading ===== */
-.loading {
-  font-size: 1.5rem;
-  text-align: center;
-  padding: 2rem;
-}
-
-/* ===== Polished card (VerifyEmail / Profile) ===== */
-.card-xl {
-  width: min(560px, 92vw);
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(6px);
-  border-radius: 20px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
-  padding: 28px 26px;
-}
-
-.card-header h2 {
-  margin: 4px 0 4px;
-}
-
-.subtle {
-  color: #4a4a4a;
-  opacity: 0.8;
-  margin: 0;
-}
-
-.email {
-  font-weight: 700;
-  margin-top: 4px;
-}
-
-.card-body { margin-top: 14px; }
-.card-footer { margin-top: 16px; display: flex; justify-content: flex-end; }
-
-/* ===== Buttons ===== */
+/* ---------- Buttons ---------- */
 .btn-primary {
+  background: var(--brand);
+  color: #fff;
   border: 0;
   padding: 12px 16px;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
-  background: #0077be;
-  color: #fff;
-  transition: transform .06s ease, box-shadow .06s ease, background .2s ease;
+  transition: transform .06s ease, box-shadow .12s ease, filter .2s ease;
 }
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-  background: #0066a1;
-}
+.btn-primary:hover { transform: translateY(-1px); filter: brightness(.96); box-shadow: 0 10px 22px rgba(11,105,199,.22); }
 
 .btn-ghost {
-  border: 1px solid rgba(0,0,0,0.1);
-  padding: 11px 16px;
-  border-radius: 10px;
   background: #fff;
-  cursor: pointer;
+  border: 1px solid rgba(2, 6, 23, .10);
+  padding: 11px 14px;
+  border-radius: 10px;
   font-weight: 600;
+  cursor: pointer;
 }
-.btn-ghost:hover { background: #f6fbff; }
+.btn-ghost:hover { background: #f7f9fc; }
 
 .btn-link {
   border: none;
   background: transparent;
-  color: #0077be;
-  cursor: pointer;
+  color: var(--brand);
   font-weight: 600;
-  padding: 8px 0;
+  cursor: pointer;
+  padding: 0;
 }
 
-/* ===== Badges & notices ===== */
-.badge {
-  display: inline-block;
-  font-size: 12px;
-  padding: 4px 8px;
+/* ---------- Table-ish profile layout ---------- */
+.table { border-top: 1px solid rgba(2,6,23,.08); margin-top: 8px; }
+.row { display: grid; grid-template-columns: 220px 1fr; border-bottom: 1px solid rgba(2,6,23,.08); }
+.cell { padding: 14px 2px; }
+.label { color: var(--ink-60); }
+
+/* ---------- Progress overlay & spinner ---------- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(3px);
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+}
+.spinner {
+  width: 22px; height: 22px;
+  border: 3px solid rgba(2,6,23,.18);
+  border-top-color: rgba(2,6,23,.65);
   border-radius: 999px;
-  background: #fff3cd;
-  color: #8a6d3b;
-  border: 1px solid #ffe8a1;
-  margin-bottom: 6px;
+  animation: spin .8s linear infinite;
 }
-
-.notice {
-  padding: 10px 12px;
-  border-radius: 10px;
-  font-size: 14px;
-}
-.notice.success { background: #e9f7ef; color: #1e7e34; border: 1px solid #c7eed8; }
-.notice.error { background: #fdecea; color: #a94442; border: 1px solid #f5c6cb; }
-
-/* ===== Small helpers ===== */
-.w-100 { width: 100%; }
-.mt-8 { margin-top: 8px; }
-.mt-12 { margin-top: 12px; }
-.tiny { font-size: 12px; opacity: .8; }
+.progress-text { color: var(--ink-60); font-weight: 600; }
+@keyframes spin { to { transform: rotate(360deg);}}
