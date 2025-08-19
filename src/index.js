@@ -11,12 +11,16 @@ root.render(
   <Auth0Provider
     domain={domain}
     clientId={clientId}
-    authorizationParams={{ redirect_uri: window.location.origin }}
+    authorizationParams={{
+      redirect_uri: window.location.origin,
+    }}
     onRedirectCallback={(appState) => {
-      const hinted = localStorage.getItem("app:lastAuthIntent");
-      const target = appState?.returnTo || hinted || "/";
+      // Remove the last auth intent after use
+      localStorage.removeItem("app:lastAuthIntent");
+      const target = appState?.returnTo || "/profile";
       window.history.replaceState({}, document.title, target);
     }}
+    cacheLocation="localstorage"
   >
     <App />
   </Auth0Provider>

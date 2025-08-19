@@ -26,7 +26,18 @@ const backgroundStyle = {
 
 /** Home (landing) */
 function Home() {
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated, isLoading } = useAuth0();  // Add isLoading here
+
+  // Add loading state handler
+  if (isLoading) {
+    return (
+      <div style={backgroundStyle}>
+        <div className="welcome-card">
+          <div className="loading-spinner">Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={backgroundStyle}>
@@ -68,6 +79,19 @@ function Gatekeeper() {
 }
 
 export default function App() {
+  const { isLoading } = useAuth0();  // Add this line
+
+  // Add global loading state handler
+  if (isLoading) {
+    return (
+      <div style={backgroundStyle}>
+        <div className="welcome-card">
+          <div className="loading-spinner">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
       <Routes>
@@ -77,5 +101,5 @@ export default function App() {
       </Routes>
       <Gatekeeper />
     </BrowserRouter>
-  );
+  );
 }

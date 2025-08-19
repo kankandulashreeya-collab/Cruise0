@@ -215,7 +215,12 @@ body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI
   background-position: center;
   background-repeat: no-repeat;
 }
-
+.loading-spinner {
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 1.2em;
+}
 /* Simple badge and notice styles if you don't already have them */
 .badge {
   display: inline-block;
